@@ -1,0 +1,36 @@
+{:itonami.blueprint/id "cloud-itonami-isic-4661"
+ :itonami.blueprint/name "Wholesale of solid, liquid and gaseous fuels and related products"
+ :itonami.blueprint/isic-rev4 "4661"
+ :itonami.blueprint/domain :downstream/fuel-wholesale-depot
+ :itonami.blueprint/license "AGPL-3.0-or-later"
+ :itonami.blueprint/social-impact [:safety :environmental-protection :transparency]
+ :itonami.blueprint/governor :fuel-depot-operations-governor
+ :itonami.blueprint/robotics true
+ :itonami.blueprint/required-technologies [:robotics :identity :forms :dmn :bpmn :audit-ledger :retail]
+ :itonami.blueprint/optional-technologies []
+ :itonami.blueprint/status :public-oss
+ :itonami.blueprint/maturity :implemented
+ :itonami.blueprint/implemented-slice
+ "FuelDepotAdvisor ⊣ Fuel Depot Operations Governor, langgraph-clj
+ StateGraph, append-only audit ledger. A fuel-WHOLESALE-DEPOT
+ OPERATIONS COORDINATION actor for ISIC 4661 (wholesale of solid,
+ liquid and gaseous fuels and related products) -- not direct
+ tank/pipeline-safety authority, not fuel-transfer control authority,
+ and NOT a hazmat-storage-safety-clearance or tank/pipeline-integrity
+ certification authority. Four ops (`:log-shipment-record` /
+ `:schedule-delivery-operation` / `:flag-safety-concern` /
+ `:coordinate-supplier-order`), all `:effect :propose` only. Governor
+ checks elaborate this blueprint's HARD invariants: propose-only
+ effect, closed op allowlist, closed proposal-effect allowlist (no
+ direct tank/pipeline-equipment control), permanent
+ tank/pipeline-integrity-clearance-finalize block, permanent
+ hazmat-storage-safety-clearance-finalize block, independent depot
+ license verification/registration before any delivery scheduling or
+ supplier-order coordination, independent delivery-quantity recompute
+ against the depot's own recorded tank capacity, double-schedule and
+ double-order guards, fuel-type validation, and quantity plausibility
+ validation. Safety-concern flagging (leak/spill/tank-integrity
+ concern) ALWAYS escalates to a human depot supervisor; supplier orders
+ above a cost threshold ALWAYS escalate; `:log-shipment-record` is the
+ only op eligible to auto-commit, and only at phase 3 when
+ governor-clean."}
