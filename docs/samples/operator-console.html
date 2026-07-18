@@ -1,0 +1,82 @@
+<html><head><meta charset="utf-8"><title>cloud-itonami-isic-4661 &middot; fuel wholesale depot operations</title><style>
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.ok { color: #137a3f; }
+body { font-family: system-ui,-apple-system,sans-serif; margin: 0; color: #1a1a1a; background: #fafafa; }
+header.bar { display: flex; align-items: center; gap: 12px; padding: 12px 20px; background: #fff; border-bottom: 1px solid #e5e5e5; }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid #f0f0f0; }
+h2 { margin-top: 0; font-size: 15px; }
+.warn { color: #b25c00; background: #fff8e1; padding: 2px 6px; border-radius: 4px; }
+main { max-width: 980px; margin: 24px auto; padding: 0 20px; }
+header.bar h1 { font-size: 18px; margin: 0; font-weight: 600; }
+.muted { color: #888; font-size: 13px; }
+.critical { color: #fff; background: #b3261e; padding: 2px 6px; border-radius: 4px; font-weight: 600; }
+.card { background: #fff; border: 1px solid #e5e5e5; border-radius: 8px; padding: 16px; margin-bottom: 16px; }
+.err { color: #b3261e; background: #fbe9e7; padding: 2px 6px; border-radius: 4px; }
+th { font-weight: 600; color: #555; font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; }
+header.bar .badge { margin-left: auto; font-size: 12px; color: #666; }
+code { font-size: 12px; background: #f4f4f4; padding: 1px 4px; border-radius: 3px; }
+</style></head><body>
+<header class="bar">
+  <h1>Fuel wholesale depot operations (ISIC 4661) — Operator Console</h1>
+  <span class="badge">read-only sample · governor-gated · tank/pipeline-integrity and hazmat-storage-safety clearance finalize permanently blocked</span>
+</header>
+<main>
+  <section class="card">
+    <h2>Depots</h2>
+    <p class="muted">Demo snapshot — build-time-generated from <code>fueldepot.store</code> via <code>fueldepot.render-html</code> (<code>clojure -M:dev:render-html</code>), regenerated nightly.</p>
+    <table>
+      <thead><tr><th>Depot</th><th>Name</th><th>License</th><th>Fuel types</th><th>Tank capacity (L)</th><th>Inventory (L)</th><th>License status</th></tr></thead>
+      <tbody>
+        <tr><td>depot-001</td><td>Bayside Fuel Terminal</td><td>MOF-FUEL-88213</td><td>diesel, kerosene, petrol</td><td>5000000.0</td><td>1050000.0</td><td><span class="ok">verified</span> &middot; <span class="ok">registered</span></td></tr>
+        <tr><td>depot-002</td><td>Harborline Bulk Storage</td><td>MOF-FUEL-88214</td><td>heavy-fuel-oil, lubricating-oil</td><td>8000000.0</td><td>7500000.0</td><td><span class="ok">verified</span> &middot; <span class="ok">registered</span></td></tr>
+        <tr><td>depot-003</td><td>Northgate LPG Depot</td><td><span class="muted">none on file</span></td><td>lpg</td><td>2000000.0</td><td>0.0</td><td><span class="critical">unverified</span> &middot; <span class="critical">unregistered</span></td></tr>
+      </tbody>
+    </table>
+  </section>
+  <section class="card">
+    <h2>Operations (this run)</h2>
+    <p class="muted">Every coordination request this scenario drove through the actor, and the depot (if any) its own proposal referenced.</p>
+    <table>
+      <thead><tr><th>Subject</th><th>Op</th><th>Depot</th><th>Last op status</th></tr></thead>
+      <tbody>
+        <tr><td><code>ship-001</code></td><td><code>log-shipment-record</code></td><td><span class="muted">n/a</span></td><td><span class="ok">committed</span></td></tr>
+        <tr><td><code>dlv-1</code></td><td><code>schedule-delivery-operation</code></td><td>depot-001</td><td><span class="ok">committed</span></td></tr>
+        <tr><td><code>concern-1</code></td><td><code>flag-safety-concern</code></td><td>depot-001</td><td><span class="ok">committed</span></td></tr>
+        <tr><td><code>ord-1</code></td><td><code>coordinate-supplier-order</code></td><td>depot-001</td><td><span class="ok">committed</span></td></tr>
+        <tr><td><code>dlv-2</code></td><td><code>schedule-delivery-operation</code></td><td>depot-003</td><td><span class="critical">HARD hold &middot; depot-not-verified</span></td></tr>
+        <tr><td><code>dlv-3</code></td><td><code>schedule-delivery-operation</code></td><td>depot-002</td><td><span class="critical">HARD hold &middot; delivery-capacity-exceeded</span></td></tr>
+        <tr><td><code>dlv-4</code></td><td><code>schedule-delivery-operation</code></td><td>depot-001</td><td><span class="critical">HARD hold &middot; tank-integrity-clearance-finalize-blocked</span></td></tr>
+      </tbody>
+    </table>
+  </section>
+  <section class="card">
+    <h2>Action gate (Fuel Depot Operations Governor)</h2>
+    <p class="muted">HARD holds cannot be overridden. Depot verification/registration, tank-capacity headroom, fuel-type validity and quantity plausibility are all independently checked from the depot's/request's own permanent fields, never trusted from the advisor's proposal.</p>
+    <table>
+      <thead><tr><th>Op</th><th>Gate</th></tr></thead>
+      <tbody>
+        <tr><td><code>:log-shipment-record</code></td><td><span class="ok">phase-3 auto-commit when clean -- the ONLY op this actor ever auto-commits</span> &middot; HARD holds: fabricated <code>:fuel-type</code>, implausible <code>:quantity-liters</code></td></tr>
+        <tr><td><code>:schedule-delivery-operation</code></td><td><span class="warn">ALWAYS human approval, never auto at any phase</span> &middot; HARD holds: depot not verified/registered, tank capacity independently recomputed as exceeded, double-schedule of the same delivery, tank-integrity-clearance finalize attempt (permanent, no override)</td></tr>
+        <tr><td><code>:flag-safety-concern</code></td><td><span class="warn">ALWAYS escalates regardless of confidence (<code>fueldepot.governor/high-stakes</code>)</span> &middot; never gated on depot verification -- a concern may be raised about ANY depot</td></tr>
+        <tr><td><code>:coordinate-supplier-order</code></td><td><span class="warn">ALWAYS human approval, never auto at any phase</span> &middot; HARD holds: depot not verified/registered, double-order of the same supplier order &middot; order value &ge; $250,000 USD independently re-derived to always escalate regardless of confidence</td></tr>
+      </tbody>
+    </table>
+  </section>
+  <section class="card">
+    <h2>Audit ledger (this run)</h2>
+    <p class="muted">Append-only decision-fact log — every proposal, hold and commit this scenario produced.</p>
+    <table>
+      <thead><tr><th>Fact</th><th>Op</th><th>Subject</th><th>Basis</th></tr></thead>
+      <tbody>
+        <tr><td>committed</td><td><code>log-shipment-record</code></td><td>ship-001</td><td>fuel-type, quantity-liters, direction</td></tr>
+        <tr><td>committed</td><td><code>schedule-delivery-operation</code></td><td>dlv-1</td><td>depot-001</td></tr>
+        <tr><td>committed</td><td><code>flag-safety-concern</code></td><td>concern-1</td><td>depot-001</td></tr>
+        <tr><td>committed</td><td><code>coordinate-supplier-order</code></td><td>ord-1</td><td>depot-001</td></tr>
+        <tr><td>governor-hold</td><td><code>schedule-delivery-operation</code></td><td>dlv-2</td><td>depot-not-verified</td></tr>
+        <tr><td>governor-hold</td><td><code>schedule-delivery-operation</code></td><td>dlv-3</td><td>delivery-capacity-exceeded</td></tr>
+        <tr><td>governor-hold</td><td><code>schedule-delivery-operation</code></td><td>dlv-4</td><td>tank-integrity-clearance-finalize-blocked</td></tr>
+      </tbody>
+    </table>
+  </section>
+</main>
+</body></html>
