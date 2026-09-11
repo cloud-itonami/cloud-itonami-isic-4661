@@ -6,7 +6,7 @@
   generator at all. This namespace drives the REAL actor stack
   (`fueldepot.operation` -> `fueldepot.governor` -> `fueldepot.store`)
   through a scenario mined directly from this repo's own `fueldepot.sim`
-  demo driver (`clojure -M:dev:run`, confirmed to run correctly against
+  demo driver (`kbb -M:dev:run`, confirmed to run correctly against
   the real seeded depot directory before this file was written -- every
   id it drives (`depot-001`/`depot-002`/`depot-003`, `ship-001`,
   `dlv-1..4`, `concern-1`, `ord-1`) exists in `fueldepot.store/sample-
@@ -19,7 +19,7 @@
   across reruns against the same seed (verified by diffing two
   consecutive runs).
 
-  Usage: `clojure -M:dev:render-html [out-file]`
+  Usage: `kbb -M:dev:render-html [out-file]`
   (default `docs/samples/operator-console.html`)."
   (:require [jp-go-dds.skin]
             [kotoba.lang.text :as str]
@@ -201,7 +201,7 @@
      "<main>\n"
      "  <section class=\"card\">\n"
      "    <h2>Depots</h2>\n"
-     "    <p class=\"muted\">Demo snapshot — build-time-generated from <code>fueldepot.store</code> via <code>fueldepot.render-html</code> (<code>clojure -M:dev:render-html</code>), regenerated nightly.</p>\n"
+     "    <p class=\"muted\">Demo snapshot — build-time-generated from <code>fueldepot.store</code> via <code>fueldepot.render-html</code> (<code>kbb -M:dev:render-html</code>), regenerated nightly.</p>\n"
      "    <table>\n"
      "      <thead><tr><th>Depot</th><th>Name</th><th>License</th><th>Fuel types</th><th>Tank capacity (L)</th><th>Inventory (L)</th><th>License status</th></tr></thead>\n"
      "      <tbody>\n"
