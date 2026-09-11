@@ -1,5 +1,5 @@
 (ns fueldepot.sim
-  "Demo driver -- `clojure -M:dev:run`. Walks a clean depot through
+  "Demo driver -- `kbb -M:dev:run`. Walks a clean depot through
   intake -> delivery-operation scheduling (escalate/approve) ->
   safety-concern flag (escalate/approve) -> supplier-order coordination
   (escalate/approve), then shows HARD-hold scenarios: a mis-wired
