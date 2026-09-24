@@ -4,7 +4,7 @@
   (HARD holds, escalation, phase gating) is exercised in
   `fueldepot.governor-contract-test`; the Store contract in
   `fueldepot.store-contract-test`."
-  (:require [clojure.test :refer [deftest is testing]]
+  (:require [kotoba.test :refer [deftest is testing]]
             [langgraph.graph :as g]
             [fueldepot.operation :as op]
             [fueldepot.store :as store]))

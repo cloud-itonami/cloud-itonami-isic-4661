@@ -3,7 +3,7 @@
   regress on: `:schedule-delivery-operation`, `:flag-safety-concern`,
   and `:coordinate-supplier-order` must NEVER be members of any
   phase's `:auto` set."
-  (:require [clojure.test :refer [deftest is testing]]
+  (:require [kotoba.test :refer [deftest is testing]]
             [fueldepot.phase :as phase]))
 
 (deftest schedule-delivery-operation-never-auto-at-any-phase

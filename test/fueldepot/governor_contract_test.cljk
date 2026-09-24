@@ -12,7 +12,7 @@
     auto-commit at any phase; `:log-shipment-record` (no
     physical/financial risk) MAY auto-commit when clean; and every
     decision (commit OR hold) leaves exactly one ledger fact."
-  (:require [clojure.test :refer [deftest is testing]]
+  (:require [kotoba.test :refer [deftest is testing]]
             [langgraph.graph :as g]
             [fueldepot.advisor :as advisor]
             [fueldepot.governor :as governor]
