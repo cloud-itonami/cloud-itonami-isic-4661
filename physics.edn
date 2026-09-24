@@ -1,0 +1,31 @@
+;; What this vertical's robot physically does, declared for
+;; kotoba.robotics.process (kotoba-lang/robotics). `kbb -M:dev:physics` runs it.
+;;
+;; README: a fuel-wholesale depot (ISIC 4661, solid, liquid and gaseous
+;; fuels) keeps its own operating records; its physical work is done by
+;; robots under kotoba-lang/robotics. The physical work: a handling arm
+;; loading filled LPG cylinders onto the delivery truck bed, and the
+;; loading-bay spill sump draining to the oil/water separator.
+;;
+;; Every number without a cited source is marked `estimate` in its :basis.
+;; Replacing an estimate with a sourced value is this bot's growth work.
+{:physics/schema "itonami.physical-ai.spec.v1"
+ :repo "cloud-itonami/cloud-itonami-isic-4661"
+ :cases
+ [{:id :load-lpg-cylinder
+   :kind :manipulator
+   :procedure "handling arm lifts a filled LPG cylinder off the filling-line conveyor and sets it into the delivery truck's cylinder cage"
+   :params {:l1-m 0.70 :l2-m 0.60 :m1-kg 14.0 :m2-kg 9.0
+            :from [0.80 0.00] :to [0.50 0.90] :duration-s 3.0 :steps 500}
+   :sweep {:param :payload-kg :values [10.0 15.0 20.0 28.0 35.0]}
+   :quantity :peak-tau1-nm
+   :limit {:max 400.0 :basis "estimate: continuous shoulder torque of a ~35 kg-payload handling arm"}
+   :boundary {:lo 1.0 :hi 100.0}}
+  {:id :drain-loading-bay-sump
+   :kind :tank-drain
+   :procedure "after a spill at the loading bay, the 4 m2 spill sump drains from 0.8 m to 0.05 m through its outlet valve into the oil/water separator"
+   :params {:tank-area-m2 4.0 :h0-m 0.8 :h-target-m 0.05 :cd 0.62 :dt-s 0.5 :max-time-s 36000.0}
+   :sweep {:param :orifice-area-m2 :values [0.0005 0.001 0.002 0.003 0.005]}
+   :quantity :time-to-target-s
+   :limit {:max 1800.0 :basis "estimate: the bay must be clear within 30 minutes to reopen for loading; the separator's own rated flow is not modelled"}
+   :boundary {:lo 0.0002 :hi 0.01}}]}
