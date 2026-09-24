@@ -1,5 +1,5 @@
 (ns fueldepot.registry-test
-  (:require [clojure.test :refer [deftest is]]
+  (:require [kotoba.test :refer [deftest is]]
             [fueldepot.registry :as r]))
 
 ;; ----------------------------- depot-verified? / depot-registered? / depot-ready? -----------------------------
